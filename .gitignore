@@ -1,0 +1,7 @@
+*.dylib
+*.a
+*.DS_Store
+.*dSYM
+.build/
+*.dSYM
+example
