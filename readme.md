@@ -9,13 +9,13 @@ Jai's version : beta 0.1.074b
 
 main :: () {
   result : ma_result;
-  engine: ma_engine;
+  engine : ma_engine;
 
   result = ma_engine_init(null, *engine);
-  assert(result == ma_result.MA_SUCCESS);
+  assert(result == ma_result.SUCCESS);
 
   result = ma_engine_play_sound(*engine, "./examples/sample.mp3", null);
-  assert(result == ma_result.MA_SUCCESS);
+  assert(result == ma_result.SUCCESS);
 
   print("All good! Playing the song!\n");
 

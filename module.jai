@@ -12,5 +12,4 @@
 
 #scope_module;
 
-size_t  :: u64;
 wchar_t :: u16;

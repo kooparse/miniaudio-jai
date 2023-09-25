@@ -49,8 +49,7 @@ generate_bindings :: () -> bool {
     }
 
     generate_library_declarations = false;
-    strip_enum_prefixes           = false;
-    auto_detect_enum_prefixes     = false;
+    auto_detect_enum_prefixes     = true;
     alias_original_enum_names     = false;
 
     footer = tprint(FOOTER_UNIX_TEMPLATE, LIB_BASE_NAME);
