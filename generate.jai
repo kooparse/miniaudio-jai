@@ -12,12 +12,19 @@ SOURCE_FILE   :: "source/miniaudio.c";
     join("linux/", LIB_BASE_NAME);
   } 
 
-  if !build_cpp_dynamic_lib(lib_folder, SOURCE_FILE, debug=false) {
+  // passed to build_cpp to force building for x64 even on apple silicon
+  x64_args := #ifx OS == .MACOS {
+      string.[ "-arch", "x86_64" ];
+  } else {
+      string.[];
+  };
+
+  if !build_cpp_dynamic_lib(lib_folder, SOURCE_FILE, debug=false, extra=x64_args) {
     Compiler.compiler_set_workspace_status(.FAILED);
     return;
   }
 
-  if !build_cpp_static_lib(lib_folder, SOURCE_FILE, debug=false) {
+  if !build_cpp_static_lib(lib_folder, SOURCE_FILE, debug=false, extra=x64_args) {
     Compiler.compiler_set_workspace_status(.FAILED);
     return;
   }
