@@ -58,7 +58,7 @@ MA_NODE_BUS_COUNT_UNKNOWN :: 255;
 
 MA_ENGINE_MAX_LISTENERS :: 4;
 
-MA_LISTENER_INDEX_CLOSEST :: cast,trunc(ma_uint8)-1;
+MA_LISTENER_INDEX_CLOSEST :: cast,trunc(ma_uint8) -1;
 
 MA_SOUND_SOURCE_CHANNEL_COUNT :: 0xFFFFFFFF;
 
@@ -99,8 +99,8 @@ MA_DATA_CONVERTER_STACK_BUFFER_SIZE :: 4096;
 
 MA_FENCE_COUNTER_MAX :: 0x7FFFFFFF;
 
-MA_JOB_ID_NONE :: ~(cast(ma_uint64)0);
-MA_JOB_SLOT_NONE :: cast,trunc(ma_uint16)(~0);
+MA_JOB_ID_NONE :: ~(cast(ma_uint64) 0);
+MA_JOB_SLOT_NONE :: cast,trunc(ma_uint16) (~0);
 
 MA_DEFAULT_PLAYBACK_DEVICE_NAME :: "Default Playback Device";
 MA_DEFAULT_CAPTURE_DEVICE_NAME :: "Default Capture Device";
@@ -129,9 +129,9 @@ MA_PLANE_BOTTOM :: 4;
 MA_PLANE_TOP :: 5;
 
 MA_DATA_SOURCE_DEFAULT_RANGE_BEG :: 0;
-MA_DATA_SOURCE_DEFAULT_RANGE_END :: ~(cast(ma_uint64)0);
+MA_DATA_SOURCE_DEFAULT_RANGE_END :: ~(cast(ma_uint64) 0);
 MA_DATA_SOURCE_DEFAULT_LOOP_POINT_BEG :: 0;
-MA_DATA_SOURCE_DEFAULT_LOOP_POINT_END :: ~(cast(ma_uint64)0);
+MA_DATA_SOURCE_DEFAULT_LOOP_POINT_END :: ~(cast(ma_uint64) 0);
 
 MA_DR_WAV_VERSION_MAJOR :: 0;
 MA_DR_WAV_VERSION_MINOR :: 13;
@@ -202,11 +202,11 @@ MA_DEFAULT_NODE_CACHE_CAP_IN_FRAMES_PER_BUS :: 480;
 
 MA_NODE_OUTPUT_BUS_FLAG_HAS_READ :: 0x01;
 
-MA_SEEK_TARGET_NONE :: ~cast(ma_uint64)0;
+MA_SEEK_TARGET_NONE :: ~cast(ma_uint64) 0;
 
 MA_DR_WAV_MAX_SIMD_VECTOR_SIZE :: 32;
-MA_DR_WAV_INT64_MIN :: cast(ma_int64)0x80000000 << 32;
-MA_DR_WAV_INT64_MAX :: ((cast(ma_int64)0x7FFFFFFF) << 32) | 0xFFFFFFFF;
+MA_DR_WAV_INT64_MIN :: cast(ma_int64) 0x80000000 << 32;
+MA_DR_WAV_INT64_MAX :: ((cast(ma_int64) 0x7FFFFFFF) << 32) | 0xFFFFFFFF;
 
 MA_DR_WAV_MAX_SAMPLE_RATE :: 384000;
 
@@ -265,7 +265,6 @@ MA_DR_MP3_HDR_SIZE :: 4;
 
 MA_DR_MP3_BITS_DEQUANTIZER_OUT :: -1;
 MA_DR_MP3_MAX_SCF :: 255 + MA_DR_MP3_BITS_DEQUANTIZER_OUT*4 - 210;
-MA_DR_MP3_MAX_SCFI :: (MA_DR_MP3_MAX_SCF + 3) & ~3;
 
 MA_DR_MP3_HAVE_SSE :: 1;
 MA_DR_MP3_HAVE_SIMD :: 1;
@@ -2744,7 +2743,7 @@ ma_job :: struct {
                 pResourceManager:  *void; /*ma_resource_manager**/
                 pDataBufferNode:   *void; /*ma_resource_manager_data_buffer_node**/
                 pFilePath:         *u8;
-                pFilePathW:        *wchar_t;
+                pFilePathW:        *s32;
                 flags:             ma_uint32; /* Resource manager data source flags that were used when initializing the data buffer. */
                 pInitNotification: *ma_async_notification; /* Signalled when the data buffer has been initialized and the format/channels/rate can be retrieved. */
                 pDoneNotification: *ma_async_notification; /* Signalled when the data buffer has been fully decoded. Will be passed through to MA_JOB_TYPE_RESOURCE_MANAGER_PAGE_DATA_BUFFER_NODE when decoding. */
@@ -2789,7 +2788,7 @@ ma_job :: struct {
             loadDataStream:     struct {
                 pDataStream:       *void; /*ma_resource_manager_data_stream**/
                 pFilePath:         *u8; /* Allocated when the job is posted, freed by the job thread after loading. */
-                pFilePathW:        *wchar_t; /* ^ As above ^. Only used if pFilePath is NULL. */
+                pFilePathW:        *s32; /* ^ As above ^. Only used if pFilePath is NULL. */
                 initialSeekPoint:  ma_uint64;
                 pInitNotification: *ma_async_notification; /* Signalled after the first two pages have been decoded and frames can be read from the stream. */
                 pInitFence:        *ma_fence;
@@ -5455,7 +5454,7 @@ ma_file_info :: struct {
 
 ma_vfs_callbacks :: struct {
     onOpen:  #type (pVFS: *ma_vfs, pFilePath: *u8, openMode: ma_uint32, pFile: *ma_vfs_file) -> ma_result #c_call;
-    onOpenW: #type (pVFS: *ma_vfs, pFilePath: *wchar_t, openMode: ma_uint32, pFile: *ma_vfs_file) -> ma_result #c_call;
+    onOpenW: #type (pVFS: *ma_vfs, pFilePath: *s32, openMode: ma_uint32, pFile: *ma_vfs_file) -> ma_result #c_call;
     onClose: #type (pVFS: *ma_vfs, file: ma_vfs_file) -> ma_result #c_call;
     onRead:  #type (pVFS: *ma_vfs, file: ma_vfs_file, pDst: *void, sizeInBytes: u64, pBytesRead: *u64) -> ma_result #c_call;
     onWrite: #type (pVFS: *ma_vfs, file: ma_vfs_file, pSrc: *void, sizeInBytes: u64, pBytesWritten: *u64) -> ma_result #c_call;
@@ -5471,7 +5470,7 @@ VFS
 **************************************************************************************************************************************************************/
 ma_vfs_open :: (pVFS: *ma_vfs, pFilePath: *u8, openMode: ma_uint32, pFile: *ma_vfs_file) -> ma_result #foreign miniaudio;
 
-ma_vfs_open_w :: (pVFS: *ma_vfs, pFilePath: *wchar_t, openMode: ma_uint32, pFile: *ma_vfs_file) -> ma_result #foreign miniaudio;
+ma_vfs_open_w :: (pVFS: *ma_vfs, pFilePath: *s32, openMode: ma_uint32, pFile: *ma_vfs_file) -> ma_result #foreign miniaudio;
 
 ma_vfs_close :: (pVFS: *ma_vfs, file: ma_vfs_file) -> ma_result #foreign miniaudio;
 
@@ -5516,7 +5515,7 @@ ma_decoding_backend_config_init :: (preferredFormat: ma_format, seekPointCount: 
 ma_decoding_backend_vtable :: struct {
     onInit:       #type (pUserData: *void, onRead: ma_read_proc, onSeek: ma_seek_proc, onTell: ma_tell_proc, pReadSeekTellUserData: *void, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, ppBackend: **ma_data_source) -> ma_result #c_call;
     onInitFile:   #type (pUserData: *void, pFilePath: *u8, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, ppBackend: **ma_data_source) -> ma_result #c_call; /* Optional. */
-    onInitFileW:  #type (pUserData: *void, pFilePath: *wchar_t, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, ppBackend: **ma_data_source) -> ma_result #c_call; /* Optional. */
+    onInitFileW:  #type (pUserData: *void, pFilePath: *s32, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, ppBackend: **ma_data_source) -> ma_result #c_call; /* Optional. */
     onInitMemory: #type (pUserData: *void, pData: *void, dataSize: u64, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, ppBackend: **ma_data_source) -> ma_result #c_call; /* Optional. */
     onUninit:     #type (pUserData: *void, pBackend: *ma_data_source, pAllocationCallbacks: *ma_allocation_callbacks) -> void #c_call;
 }
@@ -5584,11 +5583,11 @@ ma_decoder_init_memory :: (pData: *void, dataSize: u64, pConfig: *ma_decoder_con
 
 ma_decoder_init_vfs :: (pVFS: *ma_vfs, pFilePath: *u8, pConfig: *ma_decoder_config, pDecoder: *ma_decoder) -> ma_result #foreign miniaudio;
 
-ma_decoder_init_vfs_w :: (pVFS: *ma_vfs, pFilePath: *wchar_t, pConfig: *ma_decoder_config, pDecoder: *ma_decoder) -> ma_result #foreign miniaudio;
+ma_decoder_init_vfs_w :: (pVFS: *ma_vfs, pFilePath: *s32, pConfig: *ma_decoder_config, pDecoder: *ma_decoder) -> ma_result #foreign miniaudio;
 
 ma_decoder_init_file :: (pFilePath: *u8, pConfig: *ma_decoder_config, pDecoder: *ma_decoder) -> ma_result #foreign miniaudio;
 
-ma_decoder_init_file_w :: (pFilePath: *wchar_t, pConfig: *ma_decoder_config, pDecoder: *ma_decoder) -> ma_result #foreign miniaudio;
+ma_decoder_init_file_w :: (pFilePath: *s32, pConfig: *ma_decoder_config, pDecoder: *ma_decoder) -> ma_result #foreign miniaudio;
 
 /*
 Uninitializes a decoder.
@@ -5693,11 +5692,11 @@ ma_encoder_init :: (onWrite: ma_encoder_write_proc, onSeek: ma_encoder_seek_proc
 
 ma_encoder_init_vfs :: (pVFS: *ma_vfs, pFilePath: *u8, pConfig: *ma_encoder_config, pEncoder: *ma_encoder) -> ma_result #foreign miniaudio;
 
-ma_encoder_init_vfs_w :: (pVFS: *ma_vfs, pFilePath: *wchar_t, pConfig: *ma_encoder_config, pEncoder: *ma_encoder) -> ma_result #foreign miniaudio;
+ma_encoder_init_vfs_w :: (pVFS: *ma_vfs, pFilePath: *s32, pConfig: *ma_encoder_config, pEncoder: *ma_encoder) -> ma_result #foreign miniaudio;
 
 ma_encoder_init_file :: (pFilePath: *u8, pConfig: *ma_encoder_config, pEncoder: *ma_encoder) -> ma_result #foreign miniaudio;
 
-ma_encoder_init_file_w :: (pFilePath: *wchar_t, pConfig: *ma_encoder_config, pEncoder: *ma_encoder) -> ma_result #foreign miniaudio;
+ma_encoder_init_file_w :: (pFilePath: *s32, pConfig: *ma_encoder_config, pEncoder: *ma_encoder) -> ma_result #foreign miniaudio;
 
 ma_encoder_uninit :: (pEncoder: *ma_encoder) -> void #foreign miniaudio;
 
@@ -5861,7 +5860,7 @@ ma_resource_manager_flags :: enum u32 {
 
 ma_resource_manager_data_source_config :: struct {
     pFilePath:                   *u8;
-    pFilePathW:                  *wchar_t;
+    pFilePathW:                  *s32;
     pNotifications:              *ma_resource_manager_pipeline_notifications;
     initialSeekPointInPCMFrames: ma_uint64;
     rangeBegInPCMFrames:         ma_uint64;
@@ -6013,30 +6012,30 @@ ma_resource_manager_get_log :: (pResourceManager: *ma_resource_manager) -> *ma_l
 /* Registration. */
 ma_resource_manager_register_file :: (pResourceManager: *ma_resource_manager, pFilePath: *u8, flags: ma_uint32) -> ma_result #foreign miniaudio;
 
-ma_resource_manager_register_file_w :: (pResourceManager: *ma_resource_manager, pFilePath: *wchar_t, flags: ma_uint32) -> ma_result #foreign miniaudio;
+ma_resource_manager_register_file_w :: (pResourceManager: *ma_resource_manager, pFilePath: *s32, flags: ma_uint32) -> ma_result #foreign miniaudio;
 
 ma_resource_manager_register_decoded_data :: (pResourceManager: *ma_resource_manager, pName: *u8, pData: *void, frameCount: ma_uint64, format: ma_format, channels: ma_uint32, sampleRate: ma_uint32) -> ma_result #foreign miniaudio;
 
-ma_resource_manager_register_decoded_data_w :: (pResourceManager: *ma_resource_manager, pName: *wchar_t, pData: *void, frameCount: ma_uint64, format: ma_format, channels: ma_uint32, sampleRate: ma_uint32) -> ma_result #foreign miniaudio;
+ma_resource_manager_register_decoded_data_w :: (pResourceManager: *ma_resource_manager, pName: *s32, pData: *void, frameCount: ma_uint64, format: ma_format, channels: ma_uint32, sampleRate: ma_uint32) -> ma_result #foreign miniaudio;
 
 ma_resource_manager_register_encoded_data :: (pResourceManager: *ma_resource_manager, pName: *u8, pData: *void, sizeInBytes: u64) -> ma_result #foreign miniaudio;
 
-ma_resource_manager_register_encoded_data_w :: (pResourceManager: *ma_resource_manager, pName: *wchar_t, pData: *void, sizeInBytes: u64) -> ma_result #foreign miniaudio;
+ma_resource_manager_register_encoded_data_w :: (pResourceManager: *ma_resource_manager, pName: *s32, pData: *void, sizeInBytes: u64) -> ma_result #foreign miniaudio;
 
 ma_resource_manager_unregister_file :: (pResourceManager: *ma_resource_manager, pFilePath: *u8) -> ma_result #foreign miniaudio;
 
-ma_resource_manager_unregister_file_w :: (pResourceManager: *ma_resource_manager, pFilePath: *wchar_t) -> ma_result #foreign miniaudio;
+ma_resource_manager_unregister_file_w :: (pResourceManager: *ma_resource_manager, pFilePath: *s32) -> ma_result #foreign miniaudio;
 
 ma_resource_manager_unregister_data :: (pResourceManager: *ma_resource_manager, pName: *u8) -> ma_result #foreign miniaudio;
 
-ma_resource_manager_unregister_data_w :: (pResourceManager: *ma_resource_manager, pName: *wchar_t) -> ma_result #foreign miniaudio;
+ma_resource_manager_unregister_data_w :: (pResourceManager: *ma_resource_manager, pName: *s32) -> ma_result #foreign miniaudio;
 
 /* Data Buffers. */
 ma_resource_manager_data_buffer_init_ex :: (pResourceManager: *ma_resource_manager, pConfig: *ma_resource_manager_data_source_config, pDataBuffer: *ma_resource_manager_data_buffer) -> ma_result #foreign miniaudio;
 
 ma_resource_manager_data_buffer_init :: (pResourceManager: *ma_resource_manager, pFilePath: *u8, flags: ma_uint32, pNotifications: *ma_resource_manager_pipeline_notifications, pDataBuffer: *ma_resource_manager_data_buffer) -> ma_result #foreign miniaudio;
 
-ma_resource_manager_data_buffer_init_w :: (pResourceManager: *ma_resource_manager, pFilePath: *wchar_t, flags: ma_uint32, pNotifications: *ma_resource_manager_pipeline_notifications, pDataBuffer: *ma_resource_manager_data_buffer) -> ma_result #foreign miniaudio;
+ma_resource_manager_data_buffer_init_w :: (pResourceManager: *ma_resource_manager, pFilePath: *s32, flags: ma_uint32, pNotifications: *ma_resource_manager_pipeline_notifications, pDataBuffer: *ma_resource_manager_data_buffer) -> ma_result #foreign miniaudio;
 
 ma_resource_manager_data_buffer_init_copy :: (pResourceManager: *ma_resource_manager, pExistingDataBuffer: *ma_resource_manager_data_buffer, pDataBuffer: *ma_resource_manager_data_buffer) -> ma_result #foreign miniaudio;
 
@@ -6065,7 +6064,7 @@ ma_resource_manager_data_stream_init_ex :: (pResourceManager: *ma_resource_manag
 
 ma_resource_manager_data_stream_init :: (pResourceManager: *ma_resource_manager, pFilePath: *u8, flags: ma_uint32, pNotifications: *ma_resource_manager_pipeline_notifications, pDataStream: *ma_resource_manager_data_stream) -> ma_result #foreign miniaudio;
 
-ma_resource_manager_data_stream_init_w :: (pResourceManager: *ma_resource_manager, pFilePath: *wchar_t, flags: ma_uint32, pNotifications: *ma_resource_manager_pipeline_notifications, pDataStream: *ma_resource_manager_data_stream) -> ma_result #foreign miniaudio;
+ma_resource_manager_data_stream_init_w :: (pResourceManager: *ma_resource_manager, pFilePath: *s32, flags: ma_uint32, pNotifications: *ma_resource_manager_pipeline_notifications, pDataStream: *ma_resource_manager_data_stream) -> ma_result #foreign miniaudio;
 
 ma_resource_manager_data_stream_uninit :: (pDataStream: *ma_resource_manager_data_stream) -> ma_result #foreign miniaudio;
 
@@ -6092,7 +6091,7 @@ ma_resource_manager_data_source_init_ex :: (pResourceManager: *ma_resource_manag
 
 ma_resource_manager_data_source_init :: (pResourceManager: *ma_resource_manager, pName: *u8, flags: ma_uint32, pNotifications: *ma_resource_manager_pipeline_notifications, pDataSource: *ma_resource_manager_data_source) -> ma_result #foreign miniaudio;
 
-ma_resource_manager_data_source_init_w :: (pResourceManager: *ma_resource_manager, pName: *wchar_t, flags: ma_uint32, pNotifications: *ma_resource_manager_pipeline_notifications, pDataSource: *ma_resource_manager_data_source) -> ma_result #foreign miniaudio;
+ma_resource_manager_data_source_init_w :: (pResourceManager: *ma_resource_manager, pName: *s32, flags: ma_uint32, pNotifications: *ma_resource_manager_pipeline_notifications, pDataSource: *ma_resource_manager_data_source) -> ma_result #foreign miniaudio;
 
 ma_resource_manager_data_source_init_copy :: (pResourceManager: *ma_resource_manager, pExistingDataSource: *ma_resource_manager_data_source, pDataSource: *ma_resource_manager_data_source) -> ma_result #foreign miniaudio;
 
@@ -6659,7 +6658,7 @@ ma_sound_end_proc :: #type (pUserData: *void, pSound: *ma_sound) -> void #c_call
 
 ma_sound_config :: struct {
     pFilePath:                      *u8; /* Set this to load from the resource manager. */
-    pFilePathW:                     *wchar_t; /* Set this to load from the resource manager. */
+    pFilePathW:                     *s32; /* Set this to load from the resource manager. */
     pDataSource:                    *ma_data_source; /* Set this to load from an existing data source. */
     pInitialAttachment:             *ma_node; /* If set, the sound will be attached to an input of this node. This can be set to a ma_sound. If set to NULL, the sound will be attached directly to the endpoint unless MA_SOUND_FLAG_NO_DEFAULT_ATTACHMENT is set in `flags`. */
     initialAttachmentInputBusIndex: ma_uint32; /* The index of the input bus of pInitialAttachment to attach the sound to. */
@@ -6845,7 +6844,7 @@ ma_engine_play_sound :: (pEngine: *ma_engine, pFilePath: *u8, pGroup: *ma_sound_
 
 ma_sound_init_from_file :: (pEngine: *ma_engine, pFilePath: *u8, flags: ma_uint32, pGroup: *ma_sound_group, pDoneFence: *ma_fence, pSound: *ma_sound) -> ma_result #foreign miniaudio;
 
-ma_sound_init_from_file_w :: (pEngine: *ma_engine, pFilePath: *wchar_t, flags: ma_uint32, pGroup: *ma_sound_group, pDoneFence: *ma_fence, pSound: *ma_sound) -> ma_result #foreign miniaudio;
+ma_sound_init_from_file_w :: (pEngine: *ma_engine, pFilePath: *s32, flags: ma_uint32, pGroup: *ma_sound_group, pDoneFence: *ma_fence, pSound: *ma_sound) -> ma_result #foreign miniaudio;
 
 ma_sound_init_copy :: (pEngine: *ma_engine, pExistingSound: *ma_sound, flags: ma_uint32, pGroup: *ma_sound_group, pSound: *ma_sound) -> ma_result #foreign miniaudio;
 
@@ -7118,7 +7117,7 @@ are used in any performance-critical code within miniaudio.
 */
 ma_strcpy_s :: (dst: *u8, dstSizeInBytes: u64, src: *u8) -> s32 #foreign miniaudio;
 
-ma_wcscpy_s :: (dst: *wchar_t, dstCap: u64, src: *wchar_t) -> s32 #foreign miniaudio;
+ma_wcscpy_s :: (dst: *s32, dstCap: u64, src: *s32) -> s32 #foreign miniaudio;
 
 ma_strncpy_s :: (dst: *u8, dstSizeInBytes: u64, src: *u8, count: u64) -> s32 #foreign miniaudio;
 
@@ -7134,11 +7133,11 @@ ma_strappend :: (dst: *u8, dstSize: u64, srcA: *u8, srcB: *u8) -> s32 #foreign m
 
 ma_copy_string :: (src: *u8, pAllocationCallbacks: *ma_allocation_callbacks) -> *u8 #foreign miniaudio;
 
-ma_copy_string_w :: (src: *wchar_t, pAllocationCallbacks: *ma_allocation_callbacks) -> *wchar_t #foreign miniaudio;
+ma_copy_string_w :: (src: *s32, pAllocationCallbacks: *ma_allocation_callbacks) -> *s32 #foreign miniaudio;
 
 ma_fopen :: (ppFile: **FILE, pFilePath: *u8, pOpenMode: *u8) -> ma_result #foreign miniaudio;
 
-ma_wfopen :: (ppFile: **FILE, pFilePath: *wchar_t, pOpenMode: *wchar_t, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_result #foreign miniaudio;
+ma_wfopen :: (ppFile: **FILE, pFilePath: *s32, pOpenMode: *s32, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_result #foreign miniaudio;
 
 ma_atomic_memory_order :: s32;
 
@@ -7396,7 +7395,7 @@ fileno :: (stream: *FILE) -> s32 #foreign miniaudio;
 
 ma_vfs_or_default_open :: (pVFS: *ma_vfs, pFilePath: *u8, openMode: ma_uint32, pFile: *ma_vfs_file) -> ma_result #foreign miniaudio;
 
-ma_vfs_or_default_open_w :: (pVFS: *ma_vfs, pFilePath: *wchar_t, openMode: ma_uint32, pFile: *ma_vfs_file) -> ma_result #foreign miniaudio;
+ma_vfs_or_default_open_w :: (pVFS: *ma_vfs, pFilePath: *s32, openMode: ma_uint32, pFile: *ma_vfs_file) -> ma_result #foreign miniaudio;
 
 ma_vfs_or_default_close :: (pVFS: *ma_vfs, file: ma_vfs_file) -> ma_result #foreign miniaudio;
 
@@ -7410,7 +7409,7 @@ ma_vfs_or_default_tell :: (pVFS: *ma_vfs, file: ma_vfs_file, pCursor: *ma_int64)
 
 ma_vfs_or_default_info :: (pVFS: *ma_vfs, file: ma_vfs_file, pInfo: *ma_file_info) -> ma_result #foreign miniaudio;
 
-ma_vfs_open_and_read_file_w :: (pVFS: *ma_vfs, pFilePath: *wchar_t, ppData: **void, pSize: *u64, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_result #foreign miniaudio;
+ma_vfs_open_and_read_file_w :: (pVFS: *ma_vfs, pFilePath: *s32, ppData: **void, pSize: *u64, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_result #foreign miniaudio;
 
 ma_dr_wav_version :: (pMajor: *ma_uint32, pMinor: *ma_uint32, pRevision: *ma_uint32) -> void #foreign miniaudio;
 
@@ -7802,13 +7801,13 @@ ma_dr_wav_init_file :: (pWav: *ma_dr_wav, filename: *u8, pAllocationCallbacks: *
 
 ma_dr_wav_init_file_ex :: (pWav: *ma_dr_wav, filename: *u8, onChunk: ma_dr_wav_chunk_proc, pChunkUserData: *void, flags: ma_uint32, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
-ma_dr_wav_init_file_w :: (pWav: *ma_dr_wav, filename: *wchar_t, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
+ma_dr_wav_init_file_w :: (pWav: *ma_dr_wav, filename: *s32, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
-ma_dr_wav_init_file_ex_w :: (pWav: *ma_dr_wav, filename: *wchar_t, onChunk: ma_dr_wav_chunk_proc, pChunkUserData: *void, flags: ma_uint32, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
+ma_dr_wav_init_file_ex_w :: (pWav: *ma_dr_wav, filename: *s32, onChunk: ma_dr_wav_chunk_proc, pChunkUserData: *void, flags: ma_uint32, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
 ma_dr_wav_init_file_with_metadata :: (pWav: *ma_dr_wav, filename: *u8, flags: ma_uint32, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
-ma_dr_wav_init_file_with_metadata_w :: (pWav: *ma_dr_wav, filename: *wchar_t, flags: ma_uint32, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
+ma_dr_wav_init_file_with_metadata_w :: (pWav: *ma_dr_wav, filename: *s32, flags: ma_uint32, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
 ma_dr_wav_init_file_write :: (pWav: *ma_dr_wav, filename: *u8, pFormat: *ma_dr_wav_data_format, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
@@ -7816,11 +7815,11 @@ ma_dr_wav_init_file_write_sequential :: (pWav: *ma_dr_wav, filename: *u8, pForma
 
 ma_dr_wav_init_file_write_sequential_pcm_frames :: (pWav: *ma_dr_wav, filename: *u8, pFormat: *ma_dr_wav_data_format, totalPCMFrameCount: ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
-ma_dr_wav_init_file_write_w :: (pWav: *ma_dr_wav, filename: *wchar_t, pFormat: *ma_dr_wav_data_format, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
+ma_dr_wav_init_file_write_w :: (pWav: *ma_dr_wav, filename: *s32, pFormat: *ma_dr_wav_data_format, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
-ma_dr_wav_init_file_write_sequential_w :: (pWav: *ma_dr_wav, filename: *wchar_t, pFormat: *ma_dr_wav_data_format, totalSampleCount: ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
+ma_dr_wav_init_file_write_sequential_w :: (pWav: *ma_dr_wav, filename: *s32, pFormat: *ma_dr_wav_data_format, totalSampleCount: ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
-ma_dr_wav_init_file_write_sequential_pcm_frames_w :: (pWav: *ma_dr_wav, filename: *wchar_t, pFormat: *ma_dr_wav_data_format, totalPCMFrameCount: ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
+ma_dr_wav_init_file_write_sequential_pcm_frames_w :: (pWav: *ma_dr_wav, filename: *s32, pFormat: *ma_dr_wav_data_format, totalPCMFrameCount: ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
 ma_dr_wav_init_memory :: (pWav: *ma_dr_wav, data: *void, dataSize: u64, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
@@ -7846,11 +7845,11 @@ ma_dr_wav_open_file_and_read_pcm_frames_f32 :: (filename: *u8, channelsOut: *u32
 
 ma_dr_wav_open_file_and_read_pcm_frames_s32 :: (filename: *u8, channelsOut: *u32, sampleRateOut: *u32, totalFrameCountOut: *ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_int32 #foreign miniaudio;
 
-ma_dr_wav_open_file_and_read_pcm_frames_s16_w :: (filename: *wchar_t, channelsOut: *u32, sampleRateOut: *u32, totalFrameCountOut: *ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_int16 #foreign miniaudio;
+ma_dr_wav_open_file_and_read_pcm_frames_s16_w :: (filename: *s32, channelsOut: *u32, sampleRateOut: *u32, totalFrameCountOut: *ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_int16 #foreign miniaudio;
 
-ma_dr_wav_open_file_and_read_pcm_frames_f32_w :: (filename: *wchar_t, channelsOut: *u32, sampleRateOut: *u32, totalFrameCountOut: *ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> *float #foreign miniaudio;
+ma_dr_wav_open_file_and_read_pcm_frames_f32_w :: (filename: *s32, channelsOut: *u32, sampleRateOut: *u32, totalFrameCountOut: *ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> *float #foreign miniaudio;
 
-ma_dr_wav_open_file_and_read_pcm_frames_s32_w :: (filename: *wchar_t, channelsOut: *u32, sampleRateOut: *u32, totalFrameCountOut: *ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_int32 #foreign miniaudio;
+ma_dr_wav_open_file_and_read_pcm_frames_s32_w :: (filename: *s32, channelsOut: *u32, sampleRateOut: *u32, totalFrameCountOut: *ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_int32 #foreign miniaudio;
 
 ma_dr_wav_open_memory_and_read_pcm_frames_s16 :: (data: *void, dataSize: u64, channelsOut: *u32, sampleRateOut: *u32, totalFrameCountOut: *ma_uint64, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_int16 #foreign miniaudio;
 
@@ -8057,11 +8056,11 @@ ma_dr_flac_seek_to_pcm_frame :: (pFlac: *ma_dr_flac, pcmFrameIndex: ma_uint64) -
 
 ma_dr_flac_open_file :: (pFileName: *u8, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_dr_flac #foreign miniaudio;
 
-ma_dr_flac_open_file_w :: (pFileName: *wchar_t, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_dr_flac #foreign miniaudio;
+ma_dr_flac_open_file_w :: (pFileName: *s32, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_dr_flac #foreign miniaudio;
 
 ma_dr_flac_open_file_with_metadata :: (pFileName: *u8, onMeta: ma_dr_flac_meta_proc, pUserData: *void, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_dr_flac #foreign miniaudio;
 
-ma_dr_flac_open_file_with_metadata_w :: (pFileName: *wchar_t, onMeta: ma_dr_flac_meta_proc, pUserData: *void, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_dr_flac #foreign miniaudio;
+ma_dr_flac_open_file_with_metadata_w :: (pFileName: *s32, onMeta: ma_dr_flac_meta_proc, pUserData: *void, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_dr_flac #foreign miniaudio;
 
 ma_dr_flac_open_memory :: (pData: *void, dataSize: u64, pAllocationCallbacks: *ma_allocation_callbacks) -> *ma_dr_flac #foreign miniaudio;
 
@@ -8202,7 +8201,7 @@ ma_dr_mp3_init_memory :: (pMP3: *ma_dr_mp3, pData: *void, dataSize: u64, pAlloca
 
 ma_dr_mp3_init_file :: (pMP3: *ma_dr_mp3, pFilePath: *u8, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
-ma_dr_mp3_init_file_w :: (pMP3: *ma_dr_mp3, pFilePath: *wchar_t, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
+ma_dr_mp3_init_file_w :: (pMP3: *ma_dr_mp3, pFilePath: *s32, pAllocationCallbacks: *ma_allocation_callbacks) -> ma_bool32 #foreign miniaudio;
 
 ma_dr_mp3_uninit :: (pMP3: *ma_dr_mp3) -> void #foreign miniaudio;
 
@@ -8255,7 +8254,7 @@ ma_wav_init :: (onRead: ma_read_proc, onSeek: ma_seek_proc, onTell: ma_tell_proc
 
 ma_wav_init_file :: (pFilePath: *u8, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pWav: *ma_wav) -> ma_result #foreign miniaudio;
 
-ma_wav_init_file_w :: (pFilePath: *wchar_t, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pWav: *ma_wav) -> ma_result #foreign miniaudio;
+ma_wav_init_file_w :: (pFilePath: *s32, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pWav: *ma_wav) -> ma_result #foreign miniaudio;
 
 ma_wav_init_memory :: (pData: *void, dataSize: u64, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pWav: *ma_wav) -> ma_result #foreign miniaudio;
 
@@ -8286,7 +8285,7 @@ ma_flac_init :: (onRead: ma_read_proc, onSeek: ma_seek_proc, onTell: ma_tell_pro
 
 ma_flac_init_file :: (pFilePath: *u8, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pFlac: *ma_flac) -> ma_result #foreign miniaudio;
 
-ma_flac_init_file_w :: (pFilePath: *wchar_t, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pFlac: *ma_flac) -> ma_result #foreign miniaudio;
+ma_flac_init_file_w :: (pFilePath: *s32, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pFlac: *ma_flac) -> ma_result #foreign miniaudio;
 
 ma_flac_init_memory :: (pData: *void, dataSize: u64, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pFlac: *ma_flac) -> ma_result #foreign miniaudio;
 
@@ -8319,7 +8318,7 @@ ma_mp3_init :: (onRead: ma_read_proc, onSeek: ma_seek_proc, onTell: ma_tell_proc
 
 ma_mp3_init_file :: (pFilePath: *u8, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pMP3: *ma_mp3) -> ma_result #foreign miniaudio;
 
-ma_mp3_init_file_w :: (pFilePath: *wchar_t, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pMP3: *ma_mp3) -> ma_result #foreign miniaudio;
+ma_mp3_init_file_w :: (pFilePath: *s32, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pMP3: *ma_mp3) -> ma_result #foreign miniaudio;
 
 ma_mp3_init_memory :: (pData: *void, dataSize: u64, pConfig: *ma_decoding_backend_config, pAllocationCallbacks: *ma_allocation_callbacks, pMP3: *ma_mp3) -> ma_result #foreign miniaudio;
 
@@ -8522,7 +8521,7 @@ ma_dr_mp3__seeking_mp3_frame_info :: struct {
 
 #scope_file
 
-#import "Basic"; // For assert
+#import "Basic"; // For assert, push_context
 
 
 #run {

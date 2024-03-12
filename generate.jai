@@ -78,6 +78,7 @@ END
 
 #import "Basic";
 #import "String";
+#import "Toolchains/macOS";
 #import "Bindings_Generator";
 #import "BuildCpp";
 
