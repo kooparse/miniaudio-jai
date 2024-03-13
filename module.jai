@@ -9,7 +9,3 @@
 } else {
   #assert(false);
 }
-
-#scope_module;
-
-wchar_t :: u16;

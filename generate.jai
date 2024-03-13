@@ -12,19 +12,22 @@ SOURCE_FILE   :: "source/miniaudio.c";
     join("linux/", LIB_BASE_NAME);
   } 
 
-  // passed to build_cpp to force building for x64 even on apple silicon
-  x64_args := #ifx OS == .MACOS {
-      string.[ "-arch", "x86_64" ];
+  extra := #ifx OS == .MACOS {
+    options := Compiler.get_build_options();
+    args    := options.compile_time_command_line;
+    cpu     := ifx array_find(args, "-arm64") then CPU_Tag.ARM64 else .X64;
+    target  := get_macos_target_triple(cpu, 14, 0);
+    string.[ "-target", target ];
   } else {
       string.[];
   };
 
-  if !build_cpp_dynamic_lib(lib_folder, SOURCE_FILE, debug=false, extra=x64_args) {
+  if !build_cpp_dynamic_lib(lib_folder, SOURCE_FILE, debug=false, extra=extra) {
     Compiler.compiler_set_workspace_status(.FAILED);
     return;
   }
 
-  if !build_cpp_static_lib(lib_folder, SOURCE_FILE, debug=false, extra=x64_args) {
+  if !build_cpp_static_lib(lib_folder, SOURCE_FILE, debug=false, extra=extra) {
     Compiler.compiler_set_workspace_status(.FAILED);
     return;
   }
