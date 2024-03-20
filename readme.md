@@ -1,7 +1,7 @@
 ## Jai bindings for miniaudio
 
 miniaudio's version : v0.11.18</br>
-Jai's version : beta 0.1.075b
+Jai's version : 0.1.087
 
 ```jai
 #import "miniaudio-jai";
@@ -33,7 +33,7 @@ If you want to try the example, just run:
 ### Current operating system supported
 
 - [x] MacOS
-- [ ] Windows
+- [x] Windows
 - [ ] Linux
 
 Note: PR is very welcome for missing OS.
