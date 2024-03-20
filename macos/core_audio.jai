@@ -1,5 +1,7 @@
 // Mainly taking from "modules/Sound_Player/core_audio.jai".
 
+#scope_module
+
 AudioToolbox :: #system_library "AudioToolbox";
 CoreAudio    :: #system_library "CoreAudio";
 
@@ -14,7 +16,7 @@ AudioComponentDescription :: struct {
     componentSubType      : OSType;
     componentManufacturer : OSType;
     componentFlags        : u32;
-    componentFlagsMask    : u32;    
+    componentFlagsMask    : u32;
 }
 
 
