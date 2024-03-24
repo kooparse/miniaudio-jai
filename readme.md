@@ -8,18 +8,18 @@ Jai's version : 0.1.087
 #import "Basic";
 
 main :: () {
-  result : ma_result;
-  engine : ma_engine;
+    result : ma_result;
+    engine : ma_engine;
 
-  result = ma_engine_init(null, *engine);
-  assert(result == ma_result.SUCCESS);
+     result = ma_engine_init(null, *engine);
+     assert(result == ma_result.SUCCESS);
 
-  result = ma_engine_play_sound(*engine, "./examples/sample.mp3", null);
-  assert(result == ma_result.SUCCESS);
+     result = ma_engine_play_sound(*engine, "./examples/sample.mp3", null);
+     assert(result == ma_result.SUCCESS);
 
-  print("All good! Playing the song!\n");
+     print("All good! Playing the song!\n");
 
-  while true {}
+     while true {}
 }
 
 ```

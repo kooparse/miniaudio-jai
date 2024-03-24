@@ -1,17 +1,16 @@
 #if OS == {
-case .MACOS;
-  #load "macos.jai";
+    case .MACOS;
+        #load "macos.jai";
 
-  #import "POSIX";
-  #import "macos";
+        #import "POSIX";
+        #import "macos";
 
-  #load "macos/core_audio.jai";
+        #load "macos/core_audio.jai";
 
-case .WINDOWS;
-  #import "Windows";
+    case .WINDOWS;
+        #import "Windows";
 
-  #load "windows.jai";
+        #load "windows.jai";
 
-case;
-  #assert(false);
+    case; #assert(false);
 }
