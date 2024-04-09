@@ -22,9 +22,12 @@ SOURCE_FILE   :: "source/miniaudio.c";
             options := Compiler.get_build_options();
             args    := options.compile_time_command_line;
             cpu     := ifx array_find(args, "-arm64") then CPU_Tag.ARM64 else .X64;
-            target  := get_macos_target_triple(cpu, 14, 0);
-            extra = string.[ "-target", target ];
 
+            minimum_version   : type_of(options.minimum_os_version) = .{ 11, 0 };
+            target            := get_macos_target_triple(cpu, minimum_version.major, minimum_version.minor);
+            macos_version_arg := tprint("-mmacos-version-min=%.%", minimum_version.major, minimum_version.minor);
+
+            extra = string.[ "-target", target, macos_version_arg ];
         case .WINDOWS;
             extra = string.["-DWIN32_LEAN_AND_MEAN", "-DMA_API=__declspec(dllexport)"];
     };
