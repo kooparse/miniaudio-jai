@@ -15,37 +15,88 @@ SOURCE_FILE   :: "source/miniaudio.c";
         join("linux/", LIB_BASE_NAME);
     }
 
-    extra : []string;
-
     #if OS == {
         case .MACOS;
             options := Compiler.get_build_options();
-            args    := options.compile_time_command_line;
-            cpu     := ifx array_find(args, "-arm64") then CPU_Tag.ARM64 else .X64;
-
             minimum_version   : type_of(options.minimum_os_version) = .{ 11, 0 };
-            target            := get_macos_target_triple(cpu, minimum_version.major, minimum_version.minor);
             macos_version_arg := tprint("-mmacos-version-min=%.%", minimum_version.major, minimum_version.minor);
 
-            extra = string.[ "-target", target, macos_version_arg ];
+            lib_base_x64    := sprint("%/%_%", "macos", LIB_BASE_NAME, "x64");
+            x64_target      := get_macos_target_triple(.X64, minimum_version.major, minimum_version.minor);
+            x64_extra       := string.[ "-target", x64_target, macos_version_arg ];
+
+            if !build_cpp_dynamic_lib(lib_base_x64, SOURCE_FILE, debug=false, extra=x64_extra) {
+                Compiler.compiler_set_workspace_status(.FAILED);
+                return;
+            }
+
+            if !build_cpp_static_lib(lib_base_x64, SOURCE_FILE, debug=false, extra=x64_extra) {
+                Compiler.compiler_set_workspace_status(.FAILED);
+                return;
+            }
+
+            lib_base_arm64    := sprint("%/%_%", "macos", LIB_BASE_NAME, "arm64");
+            arm64_target      := get_macos_target_triple(.ARM64, minimum_version.major, minimum_version.minor);
+            arm64_extra       := string.[ "-target", arm64_target, macos_version_arg ];
+
+            if !build_cpp_dynamic_lib(lib_base_arm64, SOURCE_FILE, debug=false, extra=arm64_extra) {
+                Compiler.compiler_set_workspace_status(.FAILED);
+                return;
+            }
+
+            if !build_cpp_static_lib(lib_base_arm64, SOURCE_FILE, debug=false, extra=arm64_extra) {
+                Compiler.compiler_set_workspace_status(.FAILED);
+                return;
+            }
+
+
+            //
+            // Create universal lib now:
+            //
+
+            universal_static_base   := tprint("%/%.a", "macos", LIB_BASE_NAME);
+            universal_dylib_path := tprint("%/%.dylib", "macos", LIB_BASE_NAME);
+
+            run_or_exit("lipo", "-create", tprint("%.dylib", lib_base_x64), tprint("%.dylib", lib_base_arm64), "-output", universal_dylib_path);
+            run_or_exit("lipo", "-create", tprint("%.a", lib_base_x64),     tprint("%.a", lib_base_arm64),     "-output", universal_static_base);
+
         case .WINDOWS;
-            extra = string.["-DWIN32_LEAN_AND_MEAN", "-DMA_API=__declspec(dllexport)"];
+            extra := string.["-DWIN32_LEAN_AND_MEAN", "-DMA_API=__declspec(dllexport)"];
+
+            if !build_cpp_dynamic_lib(lib_folder, SOURCE_FILE, debug=false, extra=extra) {
+                Compiler.compiler_set_workspace_status(.FAILED);
+                return;
+            }
+
+            if !build_cpp_static_lib(lib_folder, SOURCE_FILE, debug=false, extra=extra) {
+                Compiler.compiler_set_workspace_status(.FAILED);
+                return;
+            }
     };
-
-    if !build_cpp_dynamic_lib(lib_folder, SOURCE_FILE, debug=false, extra=extra) {
-        Compiler.compiler_set_workspace_status(.FAILED);
-        return;
-    }
-
-    if !build_cpp_static_lib(lib_folder, SOURCE_FILE, debug=false, extra=extra) {
-        Compiler.compiler_set_workspace_status(.FAILED);
-        return;
-    }
 
     if !generate_bindings() {
         Compiler.compiler_report("Generate bindings failed!");
         return;
     }
+}
+
+run_or_exit :: (command: .. string, working_directory := "") -> string {
+    // Enable this to see the commands being executed.
+    // Might be useful if, for example, you need to compile LLVM on a platform where we don’t have a Jai compiler yet and want to do it manually.
+    log("Executing command \"%\" in directory \"%\"\n", join(..command, separator = " "), working_directory);
+
+    result, output_string, error_string := run_command(..command, working_directory = working_directory, capture_and_return_output = true, print_captured_output = true);
+    defer {
+        free(error_string);
+    }
+    if result.exit_code != 0 {
+        log_error("Could not run command \"%\" in directory \"%\". Exit code: %\nError:\n%", get_quoted_command_string(command), working_directory, result.exit_code, error_string);
+        // if !LIVE_OUTPUT {
+        //     log_error("Output:\n%", output_string);
+        // }
+        exit(1);
+    }
+    return output_string;
 }
 
 generate_bindings :: () -> bool {
@@ -116,6 +167,7 @@ END
 #import "Basic";
 #import "File";
 #import "String";
+#import "Process";
 #import "Bindings_Generator";
 #import "BuildCpp";
 

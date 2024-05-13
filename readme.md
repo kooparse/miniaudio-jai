@@ -1,7 +1,7 @@
 ## Jai bindings for miniaudio
 
 miniaudio's version : v0.11.18</br>
-Jai's version : 0.1.087
+Jai's version : 0.1.090
 
 ```jai
 #import "miniaudio-jai";
