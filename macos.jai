@@ -266,7 +266,7 @@ MA_DR_MP3_HDR_SIZE :: 4;
 MA_DR_MP3_BITS_DEQUANTIZER_OUT :: -1;
 MA_DR_MP3_MAX_SCF :: 255 + MA_DR_MP3_BITS_DEQUANTIZER_OUT*4 - 210;
 
-MA_DR_MP3_HAVE_SSE :: 1;
+MA_DR_MP3_HAVE_SSE :: 0;
 MA_DR_MP3_HAVE_SIMD :: 1;
 
 MA_DR_MP3_HAVE_ARMV6 :: 0;
@@ -8029,9 +8029,13 @@ ma_dr_flac :: struct {
     pDecodedSamples:          *ma_int32;
     pSeekpoints:              *ma_dr_flac_seekpoint;
     _oggbs:                   *void;
-    _noSeekTableSeek:         u8;
-    #place _noSeekTableSeek; /*bitfield 1*/ _noBinarySearchSeek:      u8;
-    #place _noSeekTableSeek; /*bitfield 2*/ _noBruteForceSeek:        u8;
+    __bitfield:               u8;
+    /* 
+        _noSeekTableSeek: ma_bool32; /* 1 bits */
+        _noBinarySearchSeek: ma_bool32; /* 1 bits */
+        _noBruteForceSeek: ma_bool32; /* 1 bits */;
+    */
+
     bs:                       ma_dr_flac_bs;
     pExtraData:               [1] ma_uint8;
 }
@@ -8187,7 +8191,7 @@ ma_dr_mp3 :: struct {
     dataCapacity:                 u64;
     dataConsumed:                 u64;
     pData:                        *ma_uint8;
-    atEnd:                        u8;
+    atEnd:                        u8; /* 1 bits */
     memory:                       struct {
         pData:          *ma_uint8;
         dataSize:       u64;
@@ -11907,15 +11911,8 @@ ma_dr_mp3__seeking_mp3_frame_info :: struct {
         assert(size_of(type_of(ma_dr_flac.pSeekpoints)) == 8, "ma_dr_flac.pSeekpoints has unexpected size % instead of 8", size_of(type_of(ma_dr_flac.pSeekpoints)));
         assert(((cast(*void)(*instance._oggbs)) - cast(*void)(*instance)) == 288, "ma_dr_flac._oggbs has unexpected offset % instead of 288", ((cast(*void)(*instance._oggbs)) - cast(*void)(*instance)));
         assert(size_of(type_of(ma_dr_flac._oggbs)) == 8, "ma_dr_flac._oggbs has unexpected size % instead of 8", size_of(type_of(ma_dr_flac._oggbs)));
-        // Bitfields are currently not correctly aligned
-        // assert(((cast(*void)(*instance._noSeekTableSeek)) - cast(*void)(*instance)) == 296, "ma_dr_flac._noSeekTableSeek has unexpected offset % instead of 296", ((cast(*void)(*instance._noSeekTableSeek)) - cast(*void)(*instance)));
-        assert(size_of(type_of(ma_dr_flac._noSeekTableSeek)) == 1, "ma_dr_flac._noSeekTableSeek has unexpected size % instead of 1", size_of(type_of(ma_dr_flac._noSeekTableSeek)));
-        // Bitfields are currently not correctly aligned
-        // assert(((cast(*void)(*instance._noBinarySearchSeek)) - cast(*void)(*instance)) == 296, "ma_dr_flac._noBinarySearchSeek has unexpected offset % instead of 296", ((cast(*void)(*instance._noBinarySearchSeek)) - cast(*void)(*instance)));
-        assert(size_of(type_of(ma_dr_flac._noBinarySearchSeek)) == 1, "ma_dr_flac._noBinarySearchSeek has unexpected size % instead of 1", size_of(type_of(ma_dr_flac._noBinarySearchSeek)));
-        // Bitfields are currently not correctly aligned
-        // assert(((cast(*void)(*instance._noBruteForceSeek)) - cast(*void)(*instance)) == 296, "ma_dr_flac._noBruteForceSeek has unexpected offset % instead of 296", ((cast(*void)(*instance._noBruteForceSeek)) - cast(*void)(*instance)));
-        assert(size_of(type_of(ma_dr_flac._noBruteForceSeek)) == 1, "ma_dr_flac._noBruteForceSeek has unexpected size % instead of 1", size_of(type_of(ma_dr_flac._noBruteForceSeek)));
+        assert(((cast(*void)(*instance.__bitfield)) - cast(*void)(*instance)) == 296, "ma_dr_flac.__bitfield has unexpected offset % instead of 296", ((cast(*void)(*instance.__bitfield)) - cast(*void)(*instance)));
+        assert(size_of(type_of(ma_dr_flac.__bitfield)) == 1, "ma_dr_flac.__bitfield has unexpected size % instead of 1", size_of(type_of(ma_dr_flac.__bitfield)));
         assert(((cast(*void)(*instance.bs)) - cast(*void)(*instance)) == 304, "ma_dr_flac.bs has unexpected offset % instead of 304", ((cast(*void)(*instance.bs)) - cast(*void)(*instance)));
         assert(size_of(type_of(ma_dr_flac.bs)) == 4176, "ma_dr_flac.bs has unexpected size % instead of 4176", size_of(type_of(ma_dr_flac.bs)));
         assert(((cast(*void)(*instance.pExtraData)) - cast(*void)(*instance)) == 4480, "ma_dr_flac.pExtraData has unexpected offset % instead of 4480", ((cast(*void)(*instance.pExtraData)) - cast(*void)(*instance)));
@@ -12067,8 +12064,7 @@ ma_dr_mp3__seeking_mp3_frame_info :: struct {
         assert(size_of(type_of(ma_dr_mp3.dataConsumed)) == 8, "ma_dr_mp3.dataConsumed has unexpected size % instead of 8", size_of(type_of(ma_dr_mp3.dataConsumed)));
         assert(((cast(*void)(*instance.pData)) - cast(*void)(*instance)) == 16024, "ma_dr_mp3.pData has unexpected offset % instead of 16024", ((cast(*void)(*instance.pData)) - cast(*void)(*instance)));
         assert(size_of(type_of(ma_dr_mp3.pData)) == 8, "ma_dr_mp3.pData has unexpected size % instead of 8", size_of(type_of(ma_dr_mp3.pData)));
-        // Bitfields are currently not correctly aligned
-        // assert(((cast(*void)(*instance.atEnd)) - cast(*void)(*instance)) == 16032, "ma_dr_mp3.atEnd has unexpected offset % instead of 16032", ((cast(*void)(*instance.atEnd)) - cast(*void)(*instance)));
+        assert(((cast(*void)(*instance.atEnd)) - cast(*void)(*instance)) == 16032, "ma_dr_mp3.atEnd has unexpected offset % instead of 16032", ((cast(*void)(*instance.atEnd)) - cast(*void)(*instance)));
         assert(size_of(type_of(ma_dr_mp3.atEnd)) == 1, "ma_dr_mp3.atEnd has unexpected size % instead of 1", size_of(type_of(ma_dr_mp3.atEnd)));
         assert(((cast(*void)(*instance.memory)) - cast(*void)(*instance)) == 16040, "ma_dr_mp3.memory has unexpected offset % instead of 16040", ((cast(*void)(*instance.memory)) - cast(*void)(*instance)));
         assert(size_of(type_of(ma_dr_mp3.memory)) == 24, "ma_dr_mp3.memory has unexpected size % instead of 24", size_of(type_of(ma_dr_mp3.memory)));
